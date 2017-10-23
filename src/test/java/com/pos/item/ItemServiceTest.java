@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 @RunWith(MockitoJUnitRunner.class)
 public class ItemServiceTest {
 
-
     private ItemDao itemDao = Mockito.mock(ItemDao.class);
     private ItemService itemService = new ItemService(itemDao);
 
@@ -19,7 +18,7 @@ public class ItemServiceTest {
         //given
         Code exampleCode = new Code("SAS");
         Item exampleItem = new Item(0, new Code("SAS"), "Pencil", new BigDecimal("131"));
-        String expectedName = "Pencil";
+        String expectedItemName = "Pencil";
 
         Mockito.when(itemService.getItemByBarcode(exampleCode)).thenReturn(exampleItem);
 
@@ -28,7 +27,7 @@ public class ItemServiceTest {
 
         //then
         Mockito.verify(itemDao).getItemByBarcode(exampleCode);
-        Assert.assertEquals(expectedName, actual.getName());
+        Assert.assertEquals(expectedItemName, actual.getName());
     }
 
 

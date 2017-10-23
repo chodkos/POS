@@ -22,12 +22,13 @@ public class TransactionTest {
     private Printer printer = Mockito.mock(Printer.class);
     private ItemDao itemDao = Mockito.mock(ItemDao.class);
     private ItemService itemService = new ItemService(itemDao);
+    private Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
 
     @Test
     public void shouldPrintItemNotFound() {
         //given
         Code exampleBarCode = new Code("ASD");
-        Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
+
         Mockito.when(reader.read()).thenReturn(exampleBarCode);
         Mockito.when(itemService.getItemByBarcode(exampleBarCode)).thenReturn(null);
 
@@ -36,7 +37,6 @@ public class TransactionTest {
         transaction.startTransaction();
 
         //then
-
         Mockito.verify(display).itemNotFound();
         Assert.assertNull(actualItem);
     }
@@ -46,7 +46,7 @@ public class TransactionTest {
     public void shouldPrintInvalidBarcode() throws Exception {
         //given
         Code emptyBarcode = new Code("");
-        Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
+
         Mockito.when(reader.read()).thenReturn(emptyBarcode);
 
         //when
@@ -60,6 +60,7 @@ public class TransactionTest {
     public void shouldReadCode() throws Exception {
         //given
         Code exampleBarcode = new Code("XYZ");
+
         Mockito.doReturn(exampleBarcode).when(reader).read();
 
         //when
@@ -74,7 +75,7 @@ public class TransactionTest {
         //given
         Code exampleBarcode = new Code("XYZ");
         Item exampleItem = new Item(0, exampleBarcode, "Mighty Item", new BigDecimal("999"));
-        Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
+
         Mockito.doReturn(exampleBarcode).when(reader).read();
         Mockito.when(itemService.getItemByBarcode(exampleBarcode)).thenReturn(exampleItem);
         Mockito.doNothing().when(display).showItem(exampleItem);
@@ -86,23 +87,12 @@ public class TransactionTest {
         Mockito.verify(display).showItem(exampleItem);
     }
 
-  /*  @Test
-    public void shouldPrintRecipt() throws Exception {
-        Code exampleBarcode = new Code("XYZ");
-        Item exampleItem = new Item(0, exampleBarcode, "Mighty Item", new BigDecimal("999"));
-        Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
-        Mockito.doReturn(exampleBarcode).when(reader).read();
-        Mockito.when(itemService.getItemByBarcode(exampleBarcode)).thenReturn(exampleItem);
-        Mockito.doNothing().when(display).showItem(exampleItem);
-    }*/
-
     @Test
     public void shouldCheckout() throws Exception {
         //given
         Item exampleItem = new Item(0, new Code("ABC"), "Item1", new BigDecimal("999"));
         Item exampleItem2 = new Item(0, new Code("DEF"), "Item2", new BigDecimal("1"));
 
-        Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
         transaction.scannedItems.add(exampleItem);
         transaction.scannedItems.add(exampleItem2);
         int scannedItemsCount = transaction.scannedItems.size();
@@ -112,7 +102,6 @@ public class TransactionTest {
         Mockito.doNothing().when(printer).printReceipt(Mockito.anyList(), Mockito.any());
 
         //when
-
         transaction.checkout();
         BigDecimal actualTotalPrice = transaction.getTotalPrice(transaction.scannedItems);
 
@@ -121,9 +110,6 @@ public class TransactionTest {
         Assert.assertEquals(expectedTotalPrice, actualTotalPrice);
         Mockito.verify(display).showTotalPrice(Mockito.any());
         Mockito.verify(printer).printReceipt(Mockito.anyList(), Mockito.any());
-
-
-
 
     }
 }

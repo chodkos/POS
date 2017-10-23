@@ -7,8 +7,6 @@ import com.pos.printer.Printer;
 import com.pos.printer.PrinterImpl;
 import com.pos.reader.ReadFromKeyboard;
 import com.pos.reader.Reader;
-import sun.invoke.empty.Empty;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

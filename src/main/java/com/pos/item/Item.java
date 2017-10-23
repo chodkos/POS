@@ -4,19 +4,17 @@ import java.math.BigDecimal;
 
 public class Item {
 
+    private Integer id;
+    private Code barcode;
+    private String name;
+    private BigDecimal price;
+
     public Item(Integer id, Code barcode, String name, BigDecimal price) {
         this.id = id;
         this.barcode = barcode;
         this.name = name;
         this.price = price;
     }
-
-    private Integer id;
-    private Code barcode;
-    private String name;
-    private BigDecimal price;
-
-
 
     public Integer getId() {
         return id;
