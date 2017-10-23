@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Transaction {
-    Reader reader;// = new ReadFromKeyboard();
-    Display display = new SimpleDisplay();
+    private Reader reader = new ReadFromKeyboard();
+    private Display display = new SimpleDisplay();
+    private ItemDao itemDao = new ItemDaoImpl();
+    private ItemService itemService = new ItemService(itemDao);
+    private Printer printer = new PrinterImpl();
     List<Item> scannedItems = new ArrayList<>();
-    ItemDao itemDao = new ItemDaoImpl();
-    ItemService itemService = new ItemService(itemDao);
-    Printer printer = new PrinterImpl();
 
     public Transaction(Reader reader, Display display, ItemDao itemDao, ItemService itemService, Printer printer) {
         this.reader = reader;
@@ -27,6 +27,9 @@ public class Transaction {
         this.itemDao = itemDao;
         this.itemService = itemService;
         this.printer = printer;
+    }
+
+    public Transaction() {
     }
 
     public void startTransaction() {
@@ -43,14 +46,12 @@ public class Transaction {
                 scannedItems.add(scannedItem);
             }
         }
-
-
     }
 
     public void checkout(){
         BigDecimal totalprice = getTotalPrice(scannedItems);
         display.showTotalPrice(totalprice);
-        printer.printReceipt(scannedItems);
+        printer.printReceipt(scannedItems, totalprice);
     }
 
     public BigDecimal getTotalPrice(List<Item> scannedItems){
@@ -59,6 +60,5 @@ public class Transaction {
             sumOfPrices = sumOfPrices.add(item.getPrice());
         }
         return sumOfPrices;
-
     }
 }

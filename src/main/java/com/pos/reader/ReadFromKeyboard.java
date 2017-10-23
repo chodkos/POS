@@ -2,8 +2,6 @@ package com.pos.reader;
 
 import com.pos.item.Code;
 
-import java.util.Scanner;
-
 public class ReadFromKeyboard implements Reader {
 
     private String code;
@@ -13,7 +11,7 @@ public class ReadFromKeyboard implements Reader {
 
     @Override
     public Code read() {
-        System.out.println("Waiting for code: ");
+        System.out.println("Code Scanning: ");
         //Scanner in = new Scanner(System.in);
         code = "SAS";
         return new Code(code);

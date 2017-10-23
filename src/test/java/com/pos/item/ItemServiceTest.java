@@ -2,31 +2,33 @@ package com.pos.item;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.Statement;
-
-import static org.junit.Assert.*;
-
+@RunWith(MockitoJUnitRunner.class)
 public class ItemServiceTest {
 
-    @Mock
-    private ItemDao itemDao;
+
+    private ItemDao itemDao = Mockito.mock(ItemDao.class);
+    private ItemService itemService = new ItemService(itemDao);
 
     @Test
-    public void name() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        ItemService itemService = new ItemService(itemDao);
-        Mockito.when(itemDao.getItemByBarcode(new Code("SAS"))).thenReturn(new Item(0, new Code("SAS"), "Kaparek", new BigDecimal("131")));
-        Item actual = itemService.getItemByBarcode(new Code("SAS"));
+    public void shouldGetItem() throws Exception {
+        //given
+        Code exampleCode = new Code("SAS");
+        Item exampleItem = new Item(0, new Code("SAS"), "Pencil", new BigDecimal("131"));
+        String expectedName = "Pencil";
 
-      //  Mockito.verify(itemDao).getItemByBarcode("SAS");
-        Assert.assertEquals("Kaparek", actual.getName());
+        Mockito.when(itemService.getItemByBarcode(exampleCode)).thenReturn(exampleItem);
+
+        //when
+        Item actual = itemService.getItemByBarcode(exampleCode);
+
+        //then
+        Mockito.verify(itemDao).getItemByBarcode(exampleCode);
+        Assert.assertEquals(expectedName, actual.getName());
     }
 
 

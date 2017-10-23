@@ -1,59 +1,44 @@
 package com.pos.transaction;
 
 import com.pos.display.Display;
-import com.pos.display.SimpleDisplay;
 import com.pos.item.Code;
 import com.pos.item.Item;
 import com.pos.item.ItemDao;
 import com.pos.item.ItemService;
 import com.pos.printer.Printer;
-import com.pos.printer.PrinterImpl;
-import com.pos.reader.ReadFromKeyboard;
 import com.pos.reader.Reader;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionTest {
 
-    Reader reader = Mockito.mock(Reader.class);
-    Display display = Mockito.mock(Display.class);
-    Printer printer = Mockito.mock(Printer.class);
-    ItemDao itemDao = Mockito.mock(ItemDao.class);
-    ItemService itemService = new ItemService(itemDao);
+    private Reader reader = Mockito.mock(Reader.class);
+    private Display display = Mockito.mock(Display.class);
+    private Printer printer = Mockito.mock(Printer.class);
+    private ItemDao itemDao = Mockito.mock(ItemDao.class);
+    private ItemService itemService = new ItemService(itemDao);
 
     @Test
-    public void shouldPrintOneItem() {
-       /* Reader reader = Mockito.mock(Reader.class);
-        Display display = Mockito.mock(Display.class);
-        Printer printer = Mockito.mock(Printer.class);
-        ItemDao itemDao = Mockito.mock(ItemDao.class);
-        ItemService itemService = new ItemService(itemDao);*/
-        String message = "Code is empty";
-        Code exampleBarCode = new Code("SAS");
+    public void shouldPrintItemNotFound() {
+        //given
+        Code exampleBarCode = new Code("ASD");
+        Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
+        Mockito.when(reader.read()).thenReturn(exampleBarCode);
+        Mockito.when(itemService.getItemByBarcode(exampleBarCode)).thenReturn(null);
 
         //when
-        Mockito.when(reader.read()).thenReturn(exampleBarCode);
-        Mockito.when(itemService.getItemByBarcode(exampleBarCode)).thenReturn(new Item(0, new Code("SAS"), "Kaktus", new BigDecimal("1223")));
-
-        Mockito.doNothing().when(display).codeIsEmpty();
         Item actualItem = itemService.getItemByBarcode(exampleBarCode);
-        Item expectedItem = new Item(0, exampleBarCode, "Kaktus", new BigDecimal("1223"));
+        transaction.startTransaction();
 
         //then
-        display.codeIsEmpty();
+
         Mockito.verify(display).itemNotFound();
-        //Assert.assertEquals("Kaktus", actualItem.getName());
+        Assert.assertNull(actualItem);
     }
 
 
@@ -63,7 +48,6 @@ public class TransactionTest {
         Code emptyBarcode = new Code("");
         Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
         Mockito.when(reader.read()).thenReturn(emptyBarcode);
-        // Mockito.doReturn(emptyBarcode).when(reader).read();
 
         //when
         transaction.startTransaction();
@@ -102,7 +86,7 @@ public class TransactionTest {
         Mockito.verify(display).showItem(exampleItem);
     }
 
-    @Test
+  /*  @Test
     public void shouldPrintRecipt() throws Exception {
         Code exampleBarcode = new Code("XYZ");
         Item exampleItem = new Item(0, exampleBarcode, "Mighty Item", new BigDecimal("999"));
@@ -110,5 +94,36 @@ public class TransactionTest {
         Mockito.doReturn(exampleBarcode).when(reader).read();
         Mockito.when(itemService.getItemByBarcode(exampleBarcode)).thenReturn(exampleItem);
         Mockito.doNothing().when(display).showItem(exampleItem);
+    }*/
+
+    @Test
+    public void shouldCheckout() throws Exception {
+        //given
+        Item exampleItem = new Item(0, new Code("ABC"), "Item1", new BigDecimal("999"));
+        Item exampleItem2 = new Item(0, new Code("DEF"), "Item2", new BigDecimal("1"));
+
+        Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
+        transaction.scannedItems.add(exampleItem);
+        transaction.scannedItems.add(exampleItem2);
+        int scannedItemsCount = transaction.scannedItems.size();
+        BigDecimal expectedTotalPrice = exampleItem.getPrice().add(exampleItem2.getPrice());
+
+        Mockito.doNothing().when(display).showTotalPrice(Mockito.any());
+        Mockito.doNothing().when(printer).printReceipt(Mockito.anyList(), Mockito.any());
+
+        //when
+
+        transaction.checkout();
+        BigDecimal actualTotalPrice = transaction.getTotalPrice(transaction.scannedItems);
+
+        //then
+        Assert.assertEquals(2, scannedItemsCount);
+        Assert.assertEquals(expectedTotalPrice, actualTotalPrice);
+        Mockito.verify(display).showTotalPrice(Mockito.any());
+        Mockito.verify(printer).printReceipt(Mockito.anyList(), Mockito.any());
+
+
+
+
     }
 }

@@ -3,7 +3,6 @@ package com.pos.display;
 import com.pos.item.Item;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public class SimpleDisplay implements Display {
 
