@@ -28,7 +28,6 @@ public class TransactionTest {
     public void shouldPrintItemNotFound() {
         //given
         Code exampleBarCode = new Code("ASD");
-
         Mockito.when(reader.read()).thenReturn(exampleBarCode);
         Mockito.when(itemService.getItemByBarcode(exampleBarCode)).thenReturn(null);
 
@@ -46,7 +45,6 @@ public class TransactionTest {
     public void shouldPrintInvalidBarcode() throws Exception {
         //given
         Code emptyBarcode = new Code("");
-
         Mockito.when(reader.read()).thenReturn(emptyBarcode);
 
         //when
@@ -60,7 +58,6 @@ public class TransactionTest {
     public void shouldReadCode() throws Exception {
         //given
         Code exampleBarcode = new Code("XYZ");
-
         Mockito.doReturn(exampleBarcode).when(reader).read();
 
         //when
