@@ -2,11 +2,11 @@ package com.pos.reader;
 
 import com.pos.item.Code;
 
-public class ReadFromKeyboard implements Reader {
+public class StubbedReader implements Reader {
 
     private String code;
 
-    public ReadFromKeyboard() {
+    public StubbedReader() {
     }
 
     @Override

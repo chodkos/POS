@@ -5,14 +5,14 @@ import com.pos.display.SimpleDisplay;
 import com.pos.item.*;
 import com.pos.printer.Printer;
 import com.pos.printer.PrinterImpl;
-import com.pos.reader.ReadFromKeyboard;
+import com.pos.reader.StubbedReader;
 import com.pos.reader.Reader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Transaction {
-    private Reader reader = new ReadFromKeyboard();
+    private Reader reader = new StubbedReader();
     private Display display = new SimpleDisplay();
     private ItemDao itemDao = new ItemDaoImpl();
     private ItemService itemService = new ItemService(itemDao);
