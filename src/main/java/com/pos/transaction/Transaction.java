@@ -9,6 +9,7 @@ import com.pos.reader.ReadFromKeyboard;
 import com.pos.reader.Reader;
 import sun.invoke.empty.Empty;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +48,17 @@ public class Transaction {
     }
 
     public void checkout(){
-        display.showTotalPrice(scannedItems);
+        BigDecimal totalprice = getTotalPrice(scannedItems);
+        display.showTotalPrice(totalprice);
         printer.printReceipt(scannedItems);
+    }
+
+    public BigDecimal getTotalPrice(List<Item> scannedItems){
+        BigDecimal sumOfPrices = new BigDecimal("0");
+        for (Item item : scannedItems){
+            sumOfPrices = sumOfPrices.add(item.getPrice());
+        }
+        return sumOfPrices;
+
     }
 }

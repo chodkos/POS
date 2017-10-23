@@ -13,12 +13,7 @@ public class SimpleDisplay implements Display {
     }
 
     @Override
-    public void showTotalPrice(List<Item> scannedItems) {
-        BigDecimal totalPrice = new BigDecimal("0");
-        for (Item item : scannedItems){
-            totalPrice = totalPrice.add(item.getPrice());
-        }
-
+    public void showTotalPrice(BigDecimal totalPrice) {
         System.out.println("Total price is: " + totalPrice.toString());
     }
 
