@@ -8,6 +8,7 @@ import java.util.List;
 public class PrinterImpl implements Printer {
     @Override
     public void printReceipt(List<Item> scannedItems) {
+        System.out.println("\nReceipt\n");
         BigDecimal totalPrice = new BigDecimal("0");
         for (Item item : scannedItems) {
             System.out.println(item.getName() + " " + item.getPrice() + "\n");

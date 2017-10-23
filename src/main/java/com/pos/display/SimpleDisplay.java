@@ -29,6 +29,6 @@ public class SimpleDisplay implements Display {
 
     @Override
     public void codeIsEmpty() {
-        System.out.println("Invalid bar-code");
+        System.out.println("Invalid bar-code!!");
     }
 }

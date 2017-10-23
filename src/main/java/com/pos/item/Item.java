@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 
 public class Item {
 
-    public Item(Integer id, String barCode, String name, BigDecimal price) {
+    public Item(Integer id, Code barcode, String name, BigDecimal price) {
         this.id = id;
-        this.barCode = barCode;
+        this.barcode = barcode;
         this.name = name;
         this.price = price;
     }
 
     private Integer id;
-    private String barCode;
+    private Code barcode;
     private String name;
     private BigDecimal price;
 
@@ -22,8 +22,8 @@ public class Item {
         return id;
     }
 
-    public String getBarCode() {
-        return barCode;
+    public Code getBarcode() {
+        return barcode;
     }
 
     public String getName() {
@@ -32,5 +32,25 @@ public class Item {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Item item = (Item) o;
+
+        if (barcode != null ? !barcode.equals(item.barcode) : item.barcode != null) return false;
+        if (name != null ? !name.equals(item.name) : item.name != null) return false;
+        return price != null ? price.equals(item.price) : item.price == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = barcode != null ? barcode.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (price != null ? price.hashCode() : 0);
+        return result;
     }
 }
