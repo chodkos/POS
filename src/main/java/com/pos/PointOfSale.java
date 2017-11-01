@@ -9,6 +9,7 @@ public class PointOfSale {
         Transaction transaction = new Transaction();
         transaction.startTransaction();
         transaction.checkout();
+        transaction.clearResources();
 
     }
 

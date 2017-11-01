@@ -7,6 +7,7 @@ import com.pos.item.ItemDao;
 import com.pos.item.ItemService;
 import com.pos.printer.Printer;
 import com.pos.reader.Reader;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionTest {
 
@@ -23,6 +27,12 @@ public class TransactionTest {
     private ItemDao itemDao = Mockito.mock(ItemDao.class);
     private ItemService itemService = new ItemService(itemDao);
     private Transaction transaction = Mockito.spy(new Transaction(reader, display, itemDao, itemService, printer));
+
+
+    @After
+    public void clear(){
+        transaction.clearResources();
+    }
 
     @Test
     public void shouldPrintItemNotFound() {
@@ -89,10 +99,10 @@ public class TransactionTest {
         //given
         Item exampleItem = new Item(0, new Code("ABC"), "Item1", new BigDecimal("999"));
         Item exampleItem2 = new Item(0, new Code("DEF"), "Item2", new BigDecimal("1"));
-
-        transaction.scannedItems.add(exampleItem);
-        transaction.scannedItems.add(exampleItem2);
-        int scannedItemsCount = transaction.scannedItems.size();
+        List<Item> expectedItems = transaction.getScannedItems();
+        expectedItems.add(exampleItem);
+        expectedItems.add(exampleItem2);
+        int scannedItemsCount = expectedItems.size();
         BigDecimal expectedTotalPrice = exampleItem.getPrice().add(exampleItem2.getPrice());
 
         Mockito.doNothing().when(display).showTotalPrice(Mockito.any());
@@ -100,7 +110,7 @@ public class TransactionTest {
 
         //when
         transaction.checkout();
-        BigDecimal actualTotalPrice = transaction.getTotalPrice(transaction.scannedItems);
+        BigDecimal actualTotalPrice = transaction.getTotalPrice(expectedItems);
 
         //then
         Assert.assertEquals(2, scannedItemsCount);

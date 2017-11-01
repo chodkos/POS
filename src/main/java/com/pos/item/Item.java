@@ -51,4 +51,12 @@ public class Item {
         result = 31 * result + (price != null ? price.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                '}';
+    }
 }

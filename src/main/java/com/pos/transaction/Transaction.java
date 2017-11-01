@@ -17,7 +17,7 @@ public class Transaction {
     private ItemDao itemDao = new ItemDaoImpl();
     private ItemService itemService = new ItemService(itemDao);
     private Printer printer = new PrinterImpl();
-    List<Item> scannedItems = new ArrayList<>();
+    private List<Item> scannedItems = new ArrayList<>();
 
     public Transaction(Reader reader, Display display, ItemDao itemDao, ItemService itemService, Printer printer) {
         this.reader = reader;
@@ -59,4 +59,16 @@ public class Transaction {
         }
         return sumOfPrices;
     }
+
+    public void clearResources(){
+        scannedItems.clear();
+    }
+
+    public List<Item> getScannedItems() {
+        return scannedItems;
+    }
+
+
+
+
 }
